@@ -1,6 +1,6 @@
 <?php
 
-class SearchPhp_FrontendController extends Website_Controller_Action
+class SearchPhp_FrontendController extends \Website\Controller\Action
 {
 
     protected $frontendIndex;
@@ -250,12 +250,7 @@ class SearchPhp_FrontendController extends Website_Controller_Action
                 if ($this->ownHostOnly and $hits != null) {
                     //get rid of hits from other hosts
                     $currenthost = $_SERVER['HTTP_HOST'];
-                    if (count($hits) == 1) {
-                        $url = $hits[0]->getDocument()->getField("url");
-                        if (strpos($url->value, "http://" . $currenthost) !== FALSE || strpos($url->value, "https://" . $currenthost) !== FALSE) {
-                            $validHits[] = $hits[0];
-                        }
-                    }
+
 
                     for ($i = 0; $i < (count($hits)); $i++) {
                         $url = $hits[$i]->getDocument()->getField("url");
@@ -263,6 +258,7 @@ class SearchPhp_FrontendController extends Website_Controller_Action
                             $validHits[] = $hits[$i];
                         }
                     }
+
                 } else {
                     $validHits = $hits;
                 }

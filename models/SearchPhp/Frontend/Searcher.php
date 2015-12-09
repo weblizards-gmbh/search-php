@@ -37,12 +37,12 @@ class SearchPhp_Frontend_Searcher {
         $data = $this->db->fetchRow($query,$params);
         $sumary = null;
         if($data){
-            $sumary =  $this->getHighlightedSumary($data['content'],array($queryStr));
+            $sumary =  $this->getHighlightedSumary(html_entity_decode($data['content']),array($queryStr));
             if(empty($sumary)){
                 $tokens = explode(" ",$queryStr);
                 if(count($tokens)>1){
                     foreach($tokens as $token){
-                        $sumary = $this->getHighlightedSumary($data['content'],$tokens);
+                        $sumary = $this->getHighlightedSumary(html_entity_decode($data['content']),$tokens);
                         if(!empty($sumary)){
                             break;
                         }
@@ -125,9 +125,11 @@ class SearchPhp_Frontend_Searcher {
             }
             $trimmedSumary = implode(" ", $tokens);
             foreach($queryTokens as $queryStr){
+                $queryStr = trim($queryStr, "*~");
                 $trimmedSumary = preg_replace('@([ \'")(-:.,;])('.$queryStr.')([ \'")(-:.,;])@si', " <span class=\"highlight\">\\1\\2\\3</span>", $trimmedSumary);
                 $trimmedSumary = preg_replace('@^('.$queryStr.')([ \'")(-:.,;])@si', " <span class=\"highlight\">\\1\\2</span>", $trimmedSumary);
                 $trimmedSumary = preg_replace('@([ \'")(-:.,;])('.$queryStr.')$@si', " <span class=\"highlight\">\\1\\2</span>", $trimmedSumary);
+                $trimmedSumary = preg_replace('@('.$queryStr.')@si', " <span class=\"highlight\">\\1</span>", $trimmedSumary);
             }
             
             return $trimmedSumary;
